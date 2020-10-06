@@ -1,4 +1,4 @@
-package day1;
+
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -7,8 +7,7 @@ import java.io.IOException;
 
 public class MyTest {
 	public static void main(String[] args) {
-//		File file = new File(args[0]); //ÆÀ²âÊ±ÓÃ
-		File file = new File("C:\\Users\\Luoyu\\Desktop\\b.txt");
+		File file = new File(args[0]); //Ã†Ã€Â²Ã¢ÃŠÂ±Ã“Ãƒ
 		BufferedReader br = null;
 		String text = "";
 		try {
@@ -35,7 +34,7 @@ class Tool {
 	public int index;
 	public char a;
 
-	public void go_test(String text) {// Ö÷Âß¼­
+	public void go_test(String text) {// Ã–Ã·Ã‚ÃŸÂ¼Â­
 		len = text.length();
 //		System.out.println(len);
 		the_text = text;
@@ -71,7 +70,7 @@ class Tool {
 		while (i < len && str.charAt(i) == '0') {
 			i++;
 		}
-		if (i == len)// È«ÊÇ0
+		if (i == len)// ÃˆÂ«ÃŠÃ‡0
 			return "0";
 		return str.substring(i);
 	}
