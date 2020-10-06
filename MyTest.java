@@ -57,8 +57,10 @@ class Tool {
 				judge_Ident();
 			} else if (isSeparator(a)) {
 				//
-			} else
+			}  else {
+				System.out.println("Unknown");
 				break;
+			}
 			if (!token.equals(""))
 				System.out.println(token);
 			clean_token();
