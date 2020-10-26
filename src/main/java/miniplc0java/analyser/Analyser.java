@@ -296,7 +296,7 @@ public final class Analyser {
         //throw new Error("Not implemented");
     }
 
-    private int analyseConstantExpression() throws CompileError {//这里要补充吗？？？
+    private int analyseConstantExpression() throws CompileError {//OVER
         // 常表达式 -> 符号? 无符号整数
         boolean negative = false;
         if (nextIf(TokenType.Plus) != null) {
@@ -315,7 +315,7 @@ public final class Analyser {
         return value;
     }
 
-    private void analyseExpression() throws CompileError {//是否要修改？？？
+    private void analyseExpression() throws CompileError {//OVER
         // 表达式 -> 项 (加法型运算符 项)*
         // 分析项
         analyseItem();
@@ -342,13 +342,13 @@ public final class Analyser {
         }
     }
 
-    private void analyseAssignmentStatement() throws CompileError {//over
+    private void analyseAssignmentStatement() throws CompileError {//OVER
         // 赋值语句 -> 标识符 '=' 表达式 ';'
 
         // 分析这个语句
 
         // 标识符是什么？
-    	var peeked = peek();
+    	var peeked = expect(TokenType.Ident);
         String name = (String) ( peeked.getValue() );
         var symbol = symbolTable.get(name);
         if (symbol == null) {
@@ -364,9 +364,17 @@ public final class Analyser {
         // 把结果保存
         var offset = getOffset(name, null);
         instructions.add(new Instruction(Operation.STO, offset));
+        
+        //等号
+        expect(TokenType.Equal);
+        //表达式
+        analyseExpression();
+        //分号
+        expect(TokenType.Semicolon);
+        
     }
 
-    private void analyseOutputStatement() throws CompileError {
+    private void analyseOutputStatement() throws CompileError {//OVER
         // 输出语句 -> 'print' '(' 表达式 ')' ';'
 
         expect(TokenType.Print);
@@ -380,7 +388,7 @@ public final class Analyser {
         instructions.add(new Instruction(Operation.WRT));
     }
 
-    private void analyseItem() throws CompileError {
+    private void analyseItem() throws CompileError { //OVER
         // 项 -> 因子 (乘法运算符 因子)*
 
         // 因子
@@ -394,6 +402,7 @@ public final class Analyser {
                 break;
             }
             next();
+            
             // 因子
             analyseFactor();
             // 生成代码
@@ -405,7 +414,7 @@ public final class Analyser {
         }
     }
 
-    private void analyseFactor() throws CompileError {
+    private void analyseFactor() throws CompileError {//OVER
         // 因子 -> 符号? (标识符 | 无符号整数 | '(' 表达式 ')')
 
         boolean negate;
@@ -420,9 +429,9 @@ public final class Analyser {
 
         if (check(TokenType.Ident)) {
             // 是标识符
-        	var peeked = peek();
+        	var peeked = next();
             // 加载标识符的值
-            String name = /* 快填 */ (String) peeked.getValue();
+            String name = /* 快填 */ (String) (peeked.getValue());
             var symbol = symbolTable.get(name);
             if (symbol == null) {
                 // 没有这个标识符
@@ -436,7 +445,7 @@ public final class Analyser {
         } else if (check(TokenType.Uint)) {
             // 是整数
             // 加载整数值
-            int value = (int) (peek().getValue());
+            int value = (int) (next().getValue());
             instructions.add(new Instruction(Operation.LIT, value));
         } else if (check(TokenType.LParen)) {
             // 是表达式
