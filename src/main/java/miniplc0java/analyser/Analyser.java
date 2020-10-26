@@ -293,7 +293,7 @@ public final class Analyser {
                 break;
             }
         }
-        throw new Error("Not implemented");
+        //throw new Error("Not implemented");
     }
 
     private int analyseConstantExpression() throws CompileError {//这里要补充吗？？？
