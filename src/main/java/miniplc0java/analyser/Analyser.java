@@ -445,7 +445,7 @@ public final class Analyser {
         	expect(TokenType.RParen);
         } else {
             // 都不是，摸了
-            throw new ExpectedTokenError(List.of(TokenType.Ident, TokenType.Uint, TokenType.LParen), next());
+           // throw new ExpectedTokenError(List.of(TokenType.Ident, TokenType.Uint, TokenType.LParen), next());
         }
 
         if (negate) {
