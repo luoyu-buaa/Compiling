@@ -200,7 +200,7 @@ public final class Analyser {
         expect(TokenType.EOF);
     }
 
-    private void analyseMain() throws CompileError {//over
+    private void analyseMain() throws CompileError {//OVER
         // 主过程 -> 常量声明 变量声明 语句序列
     	analyseConstantDeclaration();
     	analyseVariableDeclaration();
@@ -239,7 +239,7 @@ public final class Analyser {
         }
     }
 
-    private void analyseVariableDeclaration() throws CompileError {//over
+    private void analyseVariableDeclaration() throws CompileError {//OVER
         // 变量声明 -> 变量声明语句*
 
         // 如果下一个 token 是 var 就继续
@@ -262,7 +262,8 @@ public final class Analyser {
 
             // 加入符号表，请填写名字和当前位置（报错用）
             String name = (String) nameToken.getValue();
-            addSymbol(name, false, false, /* 当前位置 */nameToken.getStartPos());
+            if(initialized)
+            addSymbol(name, true, false, /* 当前位置 */nameToken.getStartPos());
 
             // 如果没有初始化的话在栈里推入一个初始值
             if (!initialized) {
@@ -271,7 +272,7 @@ public final class Analyser {
         }
     }
 
-    private void analyseStatementSequence() throws CompileError {//over?
+    private void analyseStatementSequence() throws CompileError {//OVER
         // 语句序列 -> 语句*
         // 语句 -> 赋值语句 | 输出语句 | 空语句
 
