@@ -109,7 +109,7 @@ public class Tokenizer {
     		result = new Token(TokenType.Print,"print",start,end);
     		break;
     	default:
-    		result = new Token(TokenType.Ident,"ident",start,end);
+    		result = new Token(TokenType.Ident,"strvalue",start,end);
     	}
     	return result;
     }
