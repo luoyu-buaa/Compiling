@@ -57,7 +57,8 @@ public class Tokenizer {
     	}
     	end = it.currentPos();
     	strvalue = removeZero(strvalue);
-    	int value = Integer.valueOf(strvalue).intValue();
+    	//int value = Integer.valueOf(strvalue).intValue();
+    	int value = Integer.parseInt(strvalue);
     	Token result = new Token(TokenType.Uint, value, start, end);
     	return result;
     }
