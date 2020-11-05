@@ -43,7 +43,10 @@ public class Test3 {
 		
 		while(true) {
 			out = t.text.charAt(t.now_sign);//当前要读入的字符
-			
+			if(out!='+' && out!='*' && out!='i' && out!='('&&out!=')' && out!='#') {
+				System.out.println("E");
+				break;
+			}
 			if(t.stack[t.top] == 'E')//栈顶或次栈顶的终结符
 				in = t.stack[t.top-1];
 			else 
