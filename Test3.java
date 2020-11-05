@@ -1,4 +1,4 @@
-package ÊµÑé3;
+//package å®éªŒ3;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -25,7 +25,7 @@ public class Test3 {
 	public static void main(String[] args) throws FileNotFoundException {
 		Test3 t = new Test3();
 		
-		File file = new File(args[0]); //ÆÀ²âÊ±ÓÃ
+		File file = new File(args[0]); //è¯„æµ‹æ—¶ç”¨
 //		File file = new File("C:\\Users\\Luoyu\\Desktop\\b.txt");
 		BufferedReader br = null;			
 		br = new BufferedReader(new FileReader(file));
@@ -33,7 +33,7 @@ public class Test3 {
 		try {
 			t.text = br.readLine();
 		} catch (IOException e) {
-			// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+			// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 			e.printStackTrace();
 		}
 		t.text += "#";
@@ -42,9 +42,9 @@ public class Test3 {
 		boolean result;
 		
 		while(true) {
-			out = t.text.charAt(t.now_sign);//µ±Ç°Òª¶ÁÈëµÄ×Ö·û
+			out = t.text.charAt(t.now_sign);//å½“å‰è¦è¯»å…¥çš„å­—ç¬¦
 			
-			if(t.stack[t.top] == 'E')//Õ»¶¥»ò´ÎÕ»¶¥µÄÖÕ½á·û
+			if(t.stack[t.top] == 'E')//æ ˆé¡¶æˆ–æ¬¡æ ˆé¡¶çš„ç»ˆç»“ç¬¦
 				in = t.stack[t.top-1];
 			else 
 				in = t.stack[t.top];
