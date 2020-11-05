@@ -1,0 +1,7 @@
+[jobs.pascal_lex]
+
+image = { source = "dockerfile", path = ".", tag = "my-pascal-lexer" }
+
+run = [
+  "java Test3 $input",
+]
