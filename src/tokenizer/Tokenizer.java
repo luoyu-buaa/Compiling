@@ -20,7 +20,7 @@ public class Tokenizer {
 	 * @return
 	 * @throws TokenizeError 如果解析有异常则抛出
 	 */
-	public Token nextToken() throws TokenizeError {
+	public Token nextToken() throws TokenizeError { //over!!!
 		it.readAll();
 
 		// 跳过之前的所有空白字符
@@ -51,14 +51,14 @@ public class Tokenizer {
 
 	}
 
-	private boolean in_line(char a) {
+	private boolean in_line(char a) {//over
 		boolean result = false;
 		if (a == '\\' || a == '\'' || a == '"' || a == 'n' || a == 'r' || a == 't')
 			result = true;
 		return result;
 	}
 
-	private Token lexString() throws TokenizeError {//暂定over
+	private Token lexString() throws TokenizeError {//over
 		//读入一个"，直到下一个"为止。
 		Pos start = it.currentPos();
 		Pos end = start;
@@ -80,7 +80,7 @@ public class Tokenizer {
 		return result;
 	}
 
-	private char judge1(char a) throws TokenizeError{
+	private char judge1(char a) throws TokenizeError{//over
 		char result;
 		switch (a){
 			case '\\':
@@ -312,6 +312,32 @@ public class Tokenizer {
 		}
 	}
 
+	private char judge_char(char a) throws TokenizeError{
+		char result;
+		switch (a){
+			case '\\':
+				result  = '\\';
+				break;
+			case '"':
+				result = '"';
+				break;
+			case '\'':
+				result = '\'';
+				break;
+			case 'r':
+				result = '\r';
+				break;
+			case 'n':
+				result = '\n';
+				break;
+			case 't':
+				result = '\t';
+				break;
+			default:
+				throw new TokenizeError(ErrorCode.InvalidInput,it.previousPos());
+		}
+		return result;
+	}
 	private Token lexChar() throws TokenizeError{ //over
 		Pos start_pos = it.currentPos();
 		char result;
@@ -320,28 +346,7 @@ public class Tokenizer {
 		if (peek != '\''){
 			if (peek == '\\'){
 				it.nextChar();
-				switch (it.nextChar()){
-					case '\\':
-						result  = '\\';
-						break;
-					case '"':
-						result = '"';
-						break;
-					case '\'':
-						result = '\'';
-						break;
-					case 'r':
-						result = '\r';
-						break;
-					case 'n':
-						result = '\n';
-						break;
-					case 't':
-						result = '\t';
-						break;
-					default:
-						throw new TokenizeError(ErrorCode.InvalidInput,it.previousPos());
-				}
+				result = judge_char(it.nextChar());
 			}else result = it.nextChar();
 			if(it.peekChar() == '\''){
 				it.nextChar();
