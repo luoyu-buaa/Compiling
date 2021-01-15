@@ -1,19 +1,18 @@
 package util;
 
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import instruction.FunctionInstruction;
 import instruction.Instruction;
 import instruction.Operation;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.ArrayList;
-
 public class WriteFile {
 
     public static ArrayList<ArrayList<Instruction>> functions = new ArrayList<>();
-
     public static void writeFile(String fileName, ArrayList<String> globals, ArrayList<Instruction> instructions,
                                  ArrayList<Instruction> startInstructions) throws IOException {
         FileOutputStream out = new FileOutputStream(new File(fileName));
@@ -88,13 +87,13 @@ public class WriteFile {
     }
 
     public static void cutFunction(ArrayList<Instruction> instructions) {
-        int first = 0;
+        int f = 0;
         for (int i = 1; i < instructions.size(); i++) {
             if (instructions.get(i).getOperation() == Operation.func) {
-                functions.add(new ArrayList<>(instructions.subList(first, i)));
-                first = i;
+                functions.add(new ArrayList<>(instructions.subList(f, i)));
+                f = i;
             }
         }
-        functions.add(new ArrayList<>(instructions.subList(first, instructions.size())));
+        functions.add(new ArrayList<>(instructions.subList(f, instructions.size())));
     }
 }
