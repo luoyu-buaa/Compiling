@@ -53,7 +53,7 @@ public class Tokenizer {
 
 	private boolean in_line(char a) {
 		boolean result = false;
-		if (a == '\\' || a == '\'' || a == '\"' || a == 'n' || a == 'r' || a == 't')
+		if (a == '\\' || a == '\'' || a == '"' || a == 'n' || a == 'r' || a == 't')
 			result = true;
 		return result;
 	}
@@ -62,28 +62,49 @@ public class Tokenizer {
 		//读入一个"，直到下一个"为止。
 		Pos start = it.currentPos();
 		Pos end = start;
-		String value = "\"";
+		String value = "";
 		it.nextChar();
-		char peek = it.peekChar();
-		while(peek != '"') {
-			if(it.isEOF())//没有找到另一个双引号
-				throw new TokenizeError(ErrorCode.InvalidInput, it.previousPos());
-			value += it.nextChar();
+		char peek;
+		while(!it.isEOF() && (peek = it.peekChar()) != '"') {
 			if (peek == '\\'){
-				peek = it.nextChar();
-				if(!in_line(peek))//反斜线后面没跟正确的转义符
-				throw new TokenizeError(ErrorCode.InvalidInput,it.currentPos());
-				else
-					continue;
+				it.nextChar();
+				value += judge1(it.nextChar());
 			}
-			peek = it.nextChar();
+			else value += it.nextChar();
 		}
-		value += it.nextChar();
-		end = it.currentPos();
+		if (it.isEOF())
+			throw new TokenizeError(ErrorCode.InvalidInput,it.previousPos());
+		it.nextChar();
 		Token result = new Token(TokenType.String_Literal, value, start, end);
 		return result;
 	}
 
+	private char judge1(char a) throws TokenizeError{
+		char result;
+		switch (a){
+			case '\\':
+				result = '\\';
+				break;
+			case '"':
+				result = '"';
+				break;
+			case '\'':
+				result = '\'';
+				break;
+			case 'n':
+				result = '\n';
+				break;
+			case 'r':
+				result = '\r';
+				break;
+			case 't':
+				result = '\t';
+				break;
+			default:
+				throw new TokenizeError(ErrorCode.InvalidInput, it.previousPos());
+		}
+		return result;
+	}
 	private Token lexUIntOrDouble() throws TokenizeError {//over
 		Pos start = it.currentPos();
 		Pos end;
