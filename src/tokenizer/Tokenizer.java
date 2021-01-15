@@ -106,16 +106,20 @@ public class Tokenizer {
 		}
 		return result;
 	}
+
+	private String methods3() throws TokenizeError{
+		String res = "";
+		do {
+			res += (it.nextChar());
+		} while (Character.isDigit(it.peekChar()));
+		return res;
+	}
 	private Token lexUIntOrDouble() throws TokenizeError {//over
 		Pos start = it.currentPos();
 		Pos end;
-		char peek = it.peekChar();
 		String strvalue = "";
-		while (Character.isDigit(peek)) {
-			strvalue += it.nextChar();
-			peek = it.peekChar();
-		}
-		if(peek == '.'){
+		strvalue = methods3();
+		if(it.peekChar() == '.'){
 			strvalue += it.nextChar();
 			if (Character.isDigit(it.peekChar()) ){
 				strvalue += it.nextChar();
