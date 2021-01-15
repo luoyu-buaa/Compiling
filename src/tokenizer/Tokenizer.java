@@ -262,22 +262,22 @@ public class Tokenizer {
 					//>=
 					start_pos = it.previousPos();
 					it.nextChar();
-					return new Token(TokenType.Ge, ">=", start_pos, it.currentPos());
+					return new Token(TokenType.Ge, '>', start_pos, it.currentPos());
 				}
 			case '(':
-				return new Token(TokenType.L_paren, "(", it.previousPos(), it.currentPos());
+				return new Token(TokenType.L_paren, '(', it.previousPos(), it.currentPos());
 			case ')':
-				return new Token(TokenType.R_paren, ")", it.previousPos(), it.currentPos());
+				return new Token(TokenType.R_paren, ')', it.previousPos(), it.currentPos());
 			case '{':
-				return new Token(TokenType.L_brace, "{", it.previousPos(), it.currentPos());
+				return new Token(TokenType.L_brace,'{',  it.previousPos(),it.currentPos());
 			case '}':
-				return new Token(TokenType.R_brace, "}", it.previousPos(), it.currentPos());
+				return new Token(TokenType.R_brace, '}', it.previousPos(), it.currentPos());
 			case ',':
-				return new Token(TokenType.Comma, ",", it.previousPos(), it.currentPos());
+				return new Token(TokenType.Comma, ',', it.previousPos(), it.currentPos());
 			case ':':
-				return new Token(TokenType.Colon, ":", it.previousPos(), it.currentPos());
+				return new Token(TokenType.Colon, ':', it.previousPos(), it.currentPos());
 			case ';':
-				return new Token(TokenType.Semicolon, ";", it.previousPos(), it.currentPos());
+				return new Token(TokenType.Semicolon, ';', it.previousPos(), it.currentPos());
 			default:
 				// 不认识这个输入，摸了
 				throw new TokenizeError(ErrorCode.InvalidInput, it.previousPos());
