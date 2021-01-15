@@ -149,79 +149,65 @@ public class Tokenizer {
 			return "0";
 		return str.substring(i);
 	}
-
-	private Token lexIdentOrKeyword() throws TokenizeError { //over
-		// 请填空：
-		// 直到查看下一个字符不是数字或字母或下划线为止:
-		// -- 前进一个字符，并存储这个字符
-		//
-		// 尝试将存储的字符串解释为关键字
-		// -- 如果是关键字，则返回关键字类型的 token
-		// -- 否则，返回标识符
-		//
-		// Token 的 Value 应填写标识符或关键字的字符串
-		Pos start = it.currentPos();
-		Pos end = start;
-		char peek = it.peekChar();
-		//这是字符串的首字符
-		char first_ch = peek;
-
-		String strvalue = "";
-		while (Character.isDigit(peek) || Character.isAlphabetic(peek) || peek == '_') {
-			strvalue += it.nextChar();
-			peek = it.peekChar();
-		}
-		end = it.currentPos();
-
-		//如果第一个字符为下划线，则必定为标识符
-		if (first_ch == '_')
-			return new Token(TokenType.Ident, "ident", start, end);
-
-		Token result;
-		switch (strvalue) {
+	private String fix1() throws TokenizeError{
+		String result ="";
+		do {
+			result += it.nextChar();
+		}while (Character.isLetterOrDigit(it.peekChar()) || it.peekChar() == '_');
+		return result;
+	}
+	private TokenType fix2(String a) throws TokenizeError{
+		TokenType res;
+		switch (a) {
 			case "fn":
-				result = new Token(TokenType.Fn, "Fn", start, end);
+				res = TokenType.Fn;
 				break;
 			case "let":
-				result = new Token(TokenType.Let, "Let", start, end);
+				res = TokenType.Let;
 				break;
 			case "const":
-				result = new Token(TokenType.Const, "Const", start, end);
+				res = TokenType.Const;
 				break;
 			case "as":
-				result = new Token(TokenType.As, "As", start, end);
+				res = TokenType.As;
 				break;
 			case "while":
-				result = new Token(TokenType.While, "While", start, end);
+				res = TokenType.While;
 				break;
 			case "if":
-				result = new Token(TokenType.If, "If", start, end);
+				res = TokenType.If;
 				break;
 			case "else":
-				result = new Token(TokenType.Else, "Else", start, end);
+				res = TokenType.Else;
 				break;
 			case "return":
-				result = new Token(TokenType.Return, "Return", start, end);
+				res = TokenType.Return;
 				break;
 			case "break":
-				result = new Token(TokenType.Break, "Break", start, end);
+				res = TokenType.Break;
 				break;
 			case "continue":
-				result = new Token(TokenType.Continue, "Continue", start, end);
+				res = TokenType.Continue;
 				break;
 			case "int":
-				result = new Token(TokenType.Int,"Int",start,end);
+				res=TokenType.Int;
 				break;
 			case "void":
-				result = new Token(TokenType.Void,"Void",start,end);
+				res=TokenType.Void;
 				break;
 			case "double":
-				result = new Token(TokenType.Double_Literal,"Double_Literal",start,end);
+				res=TokenType.Double_Literal;
 				break;
-				//标识符
 			default:
-				result = new Token(TokenType.Ident, strvalue, start, end);
+				res = TokenType.Ident;
 		}
+		return res;
+	}
+	private Token lexIdentOrKeyword() throws TokenizeError { //over
+		Pos start = it.currentPos();
+		String strvalue = fix1();
+		TokenType ty = fix2(strvalue);
+		Token result = new Token(ty,strvalue,start,it.currentPos());
 		return result;
 	}
 
