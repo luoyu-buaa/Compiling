@@ -75,6 +75,7 @@ public class Tokenizer {
 		if (it.isEOF())
 			throw new TokenizeError(ErrorCode.InvalidInput,it.previousPos());
 		it.nextChar();
+		end = it.currentPos();
 		Token result = new Token(TokenType.String_Literal, value, start, end);
 		return result;
 	}
