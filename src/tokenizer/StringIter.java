@@ -51,7 +51,7 @@ public class StringIter {
             linesBuffer.add(the_next + '\n');
         }
     }
-    
+
     /**
      * 获取下一个字符的位置
      */
