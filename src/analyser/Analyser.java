@@ -273,15 +273,25 @@ public  class Analyser {
             if (check(TokenType.Fn))
                 analyse_function();
             else
-                analyseconst_decl_stmt(StorageType.global);
+                analyse_decl_stmt(StorageType.global);
         }
     }
+    private void analyse_decl_stmt(StorageType storageType) throws CompileError{
+        if (check(TokenType.Let))
+            analyselet_decl_stmt(storageType);
+        else
+            analyseconst_decl_stmt(storageType);
+    }
+    private void to_start() throws CompileError{
+        Globals.add("_start");
+        startInstructions.add(new FunctionInstruction(Operation.func, 0, 0, 0, global_offset++));
+    }
+
     private void analyseProgram() throws CompileError {//over的主框架
         // program -> decl_stmt* function*
         //函数以fn开头
         //decl以let或const开头
-        Globals.add("_start");
-        startInstructions.add(new FunctionInstruction(Operation.func, 0, 0, 0, global_offset++));
+        to_start();
         ap1();
         if (this.hashMap.get("main") == null)
             throw new AnalyzeError(ErrorCode.InvalidInput,expect(TokenType.Eof).getStartPos());
@@ -304,7 +314,7 @@ public  class Analyser {
         switch (peeked.getTokenType()){
             case Let:
             case Const:
-                analyselet_decl_stmt(StorageType.local);
+                analyse_decl_stmt(StorageType.local);
                 return new boolean[]{false, false};
 
             case If:
