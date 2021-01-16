@@ -466,40 +466,55 @@ public  class Analyser {
     }
 
     //over
+    private boolean abs() throws CompileError{
+        boolean result = false;
+        if (check(TokenType.Minus) || check(TokenType.Ident) ||
+                check(TokenType.Uint_Literal) || check(TokenType.Double_Literal) || check(TokenType.String_Literal) ||
+                check(TokenType.Char_Literal) || check(TokenType.L_paren) || check(TokenType.Let) ||
+                check(TokenType.Const) || check(TokenType.If) || check(TokenType.While) ||
+                check(TokenType.Break) || check(TokenType.Continue) || check(TokenType.Return) ||
+                check(TokenType.Semicolon) || check(TokenType.L_brace))
+            result = true;
+        return result;
+    }
     private boolean[] analyse_block_stmt(boolean is_Fun, boolean inside_while, SymbolType return_ty, int loopLoc, ArrayList<Integer> break_list) throws CompileError{
         //block_stmt -> '{' stmt* '}'
 
         boolean now_return = false;
-        boolean now_BrearkOrContinue = false;
+        boolean now_BreakOrContinue = false;
         int return_s = 0;
         int Break_Or_Continue_s = 0;
         expect(TokenType.L_brace);
         if(!is_Fun)
             add_Block();
-        while (peek().getTokenType() != TokenType.R_brace && peek().getTokenType() != TokenType.Eof){
+        while (abs()){
             if (return_s == 0 && now_return)
                 return_s = instructions.size();
-            else if (Break_Or_Continue_s == 0 && now_BrearkOrContinue)
+            else if (Break_Or_Continue_s == 0 && now_BreakOrContinue)
                 Break_Or_Continue_s = instructions.size();
-            if (now_return && now_BrearkOrContinue)
+            if (now_return && now_BreakOrContinue)
                 analyse_stmt(inside_while,return_ty,loopLoc,break_list);
             else if (now_return)
-                now_BrearkOrContinue = analyse_stmt(inside_while,return_ty,loopLoc,break_list)[1];
-            else if(now_BrearkOrContinue)
+                now_BreakOrContinue = analyse_stmt(inside_while,return_ty,loopLoc,break_list)[1];
+            else if(now_BreakOrContinue)
                 now_return = analyse_stmt(inside_while,return_ty,loopLoc,break_list)[0];
             else {
                 boolean[] c = analyse_stmt(inside_while,return_ty,loopLoc,break_list);
                 now_return = c[0];
-                now_BrearkOrContinue = c[1];
+                now_BreakOrContinue = c[1];
             }
         }
         expect(TokenType.R_brace);
+        abs1(return_s,Break_Or_Continue_s);
+        remove_BlockSymbols(is_Fun);
+        return new boolean[]{now_return,now_BreakOrContinue};
+    }
+
+    private void abs1(int return_s,int Break_Or_Continue_s) throws CompileError{
         if(return_s > 0)
             instructions.subList(return_s,instructions.size()).clear();
         if(Break_Or_Continue_s > 0)
             instructions.subList(Break_Or_Continue_s,instructions.size()).clear();
-        remove_BlockSymbols(is_Fun);
-        return new boolean[]{now_return,now_BrearkOrContinue};
     }
 
     private void analyse_empty_stmt() throws CompileError{
@@ -1082,19 +1097,25 @@ public  class Analyser {
             analyse_function_param(params);
         }
     }
-
+    private boolean afp() throws CompileError{
+        boolean result = false;
+        if(peek().getTokenType() == TokenType.Const){
+            next();
+            result = true;
+        }
+        return result;
+    }
+    private void afp2() throws CompileError{
+        expect(TokenType.Colon);
+    }
     private void analyse_function_param(ArrayList<SymbolType> params) throws CompileError{
         //参数
         //function_param -> 'const'? IDENT ':' ty
 
         //judge判断是否为const类型
-        boolean judge = false;
-        if(peek().getTokenType() == TokenType.Const){
-            next();
-            judge = true;
-        }
+        boolean judge = afp();
         Token name = expect(TokenType.Ident);
-        expect(TokenType.Colon);
+        afp2();
         SymbolType ty = analysety();
         add_Symbol(name.getValueString(),judge,true,ty,StorageType.argument,name.getStartPos());
         params.add(ty);
