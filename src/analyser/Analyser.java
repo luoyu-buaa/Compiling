@@ -268,18 +268,21 @@ public  class Analyser {
         System.out.println("remove block");
     }
 
-    private void analyseProgram() throws CompileError {//over的主框架
-        // program -> decl_stmt* function*
-        //函数以fn开头
-        //decl以let或const开头
-        Globals.add("_start");
-        startInstructions.add(new FunctionInstruction(Operation.func, 0, 0, 0, global_offset++));
+    private void ap1() throws  CompileError{
         while (check(TokenType.Fn) || check(TokenType.Let) || check(TokenType.Const)){
             if (check(TokenType.Fn))
                 analyse_function();
             else
                 analyseconst_decl_stmt(StorageType.global);
         }
+    }
+    private void analyseProgram() throws CompileError {//over的主框架
+        // program -> decl_stmt* function*
+        //函数以fn开头
+        //decl以let或const开头
+        Globals.add("_start");
+        startInstructions.add(new FunctionInstruction(Operation.func, 0, 0, 0, global_offset++));
+        ap1();
         if (this.hashMap.get("main") == null)
             throw new AnalyzeError(ErrorCode.InvalidInput,expect(TokenType.Eof).getStartPos());
         startInstructions.add(new Instruction(Operation.stackalloc, 0));
