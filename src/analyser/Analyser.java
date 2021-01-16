@@ -1020,6 +1020,10 @@ public  class Analyser {
         analyse_expr();
         expect(TokenType.R_paren);
     }
+    private void af1() throws CompileError{
+        expect(TokenType.R_paren);
+        expect(TokenType.Arrow);
+    }
 
     private void analyse_function() throws CompileError{ //over
         //函数声明
@@ -1029,6 +1033,7 @@ public  class Analyser {
                          |              |                        |  |
                          function_name  param_list     return_type  function_body
         * */
+
         expect(TokenType.Fn);
         Token name = expect(TokenType.Ident);
         Symbol func_Symbol = add_FuncSymbol(name.getValueString(), name.getStartPos());
@@ -1036,11 +1041,10 @@ public  class Analyser {
         FunctionInstruction functionInstruction = new FunctionInstruction(Operation.func);
         instructions.add(functionInstruction);
         expect(TokenType.L_paren);
-        if(peek().getTokenType() != TokenType.R_paren){
+        if(peek().getTokenType() == TokenType.Ident){
             analyse_function_param_list(func_Symbol.getParams());
         }
-        expect(TokenType.R_paren);
-        expect(TokenType.Arrow);
+        af1();
         SymbolType ty = analysety();
         func_Symbol.setSymbolType(ty);
         functionInstruction.setParamCount(argument_offset);
@@ -1058,12 +1062,17 @@ public  class Analyser {
         functionInstruction.setOffset(func_Symbol.getOffset());
         boolean[] c = analyse_block_stmt(true,false,ty,0,null);
         if(ty != SymbolType.VOID && !c[0])
-            throw new AnalyzeError(ErrorCode.InvalidInput,name.getStartPos());
+            af_judge1(name);
         if(ty == SymbolType.VOID && !c[0])
-            instructions.add(new Instruction((Operation.ret)));
+            af_judge2();
         functionInstruction.setLocalCount(local_offset);
     }
-
+    private void af_judge1(Token name) throws CompileError{
+        throw new AnalyzeError(ErrorCode.InvalidInput,name.getStartPos());
+    }
+    private void af_judge2() throws CompileError{
+        instructions.add(new Instruction((Operation.ret)));
+    }
     private void analyse_function_param_list(ArrayList<SymbolType> params) throws CompileError{
         //参数列表
         //function_param_list -> function_param (',' function_param)*
