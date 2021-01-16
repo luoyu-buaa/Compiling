@@ -248,8 +248,7 @@ public  class Analyser {
                 sym.setInitialized(true);
         }
     }
-    private void remove_BlockSymbols(boolean isFunction) {
-        int end = index.pop();
+    private void r1(int end) {
         for (int i = symbolTable.size() - 1; i >= end; i--) {
             Symbol tmpSymbol = symbolTable.pop();
             if (tmpSymbol.getChain() == -1) {
@@ -259,6 +258,11 @@ public  class Analyser {
                 hashMap.put(tmpSymbol.getName(), tmpSymbol.getChain());
             }
         }
+    }
+
+    private void remove_BlockSymbols(boolean isFunction) {
+        int end = index.pop();
+        r1(end);
         if (isFunction)
             argument_offset = 0;
         System.out.println("remove block");
