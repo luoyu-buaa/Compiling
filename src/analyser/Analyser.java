@@ -6,13 +6,15 @@ import instruction.Instruction;
 import instruction.FunctionInstruction;
 import instruction.Operation;
 
+import tokenizer.Token;
+import tokenizer.TokenType;
+import tokenizer.Tokenizer;
+
 import symbol.StorageType;
 import symbol.Symbol;
 import symbol.SymbolType;
 
-import tokenizer.Token;
-import tokenizer.TokenType;
-import tokenizer.Tokenizer;
+
 
 import util.Pos;
 import util.WriteFile;
@@ -21,7 +23,7 @@ import java.sql.Array;
 import java.util.*;
 import java.io.IOException;
 
-public final class Analyser {
+public  class Analyser {
     //初始化词法分析器
     Tokenizer tokenizer;
 
