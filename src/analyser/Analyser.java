@@ -280,9 +280,8 @@ public  class Analyser {
             else
                 analyseconst_decl_stmt(StorageType.global);
         }
-        Token end = expect(TokenType.Eof);
         if (this.hashMap.get("main") == null)
-            throw new AnalyzeError(ErrorCode.InvalidInput,end.getStartPos());
+            throw new AnalyzeError(ErrorCode.InvalidInput,expect(TokenType.Eof).getStartPos());
         startInstructions.add(new Instruction(Operation.stackalloc, 0));
         startInstructions.add(new Instruction(Operation.call, this.symbolTable.get(this.hashMap.get("main")).getFuncOffset()));
     }
