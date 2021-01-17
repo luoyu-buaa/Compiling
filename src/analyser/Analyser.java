@@ -533,6 +533,12 @@ public  class Analyser {
     }
 
 
+    private void judge3(boolean is_g) throws CompileError{
+        if (is_g)
+            startInstructions.add(new Instruction(Operation.store64));
+        else
+            instructions.add(new Instruction(Operation.store64));
+    }
 
     private void analyselet_decl_stmt(StorageType storageType) throws CompileError{ //over
         //let_decl_stmt -> 'let' IDENT ':' ty ('=' expr)? ';'
@@ -559,10 +565,7 @@ public  class Analyser {
             OPGSymbol em = analyse_opg_expr(is_g);
             j1(ty,em);
             change_Initialized(name.getValueString(),name.getStartPos());
-            if (is_g)
-                startInstructions.add(new Instruction(Operation.store64));
-            else
-                instructions.add(new Instruction(Operation.store64));
+            judge3(is_g);
         }
         expect(TokenType.Semicolon);
     }
@@ -586,10 +589,7 @@ public  class Analyser {
         OPGSymbol sym_opg = analyse_opg_expr(is_g);
         j1(ty,sym_opg);
         expect(TokenType.Semicolon);
-        if (is_g)
-            startInstructions.add(new Instruction((Operation.store64)));
-        else
-            instructions.add(new Instruction(Operation.store64));
+        judge3(is_g);
     }
 
     private void j1(SymbolType ty,OPGSymbol em) throws CompileError{
