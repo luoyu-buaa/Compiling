@@ -43,20 +43,12 @@ public class Tokenizer {
 		}else if(peek == '\''){
 			//判断是否为字符字面量
 			return lexChar();
-		}
-		else {
+		} else {
 			//判断是否为运算符或者未知错误 //新加：判断是否为注释
 			return lexOperatorOrUnknownOrComment();
 		}
-
 	}
 
-	private boolean in_line(char a) {//over
-		boolean result = false;
-		if (a == '\\' || a == '\'' || a == '"' || a == 'n' || a == 'r' || a == 't')
-			result = true;
-		return result;
-	}
 
 	private Token lexString() throws TokenizeError {//over
 		//读入一个"，直到下一个"为止。
@@ -269,12 +261,12 @@ public class Tokenizer {
 				}
 			case '>':
 				if(it.peekChar() != '=')
-				return new Token(TokenType.Gt, ">", it.previousPos(), it.currentPos());
+				return new Token(TokenType.Gt, '>', it.previousPos(), it.currentPos());
 				else {
 					//>=
 					start_pos = it.previousPos();
 					it.nextChar();
-					return new Token(TokenType.Ge, '>', start_pos, it.currentPos());
+					return new Token(TokenType.Ge, ">=", start_pos, it.currentPos());
 				}
 			case '(':
 				return new Token(TokenType.L_paren, '(', it.previousPos(), it.currentPos());

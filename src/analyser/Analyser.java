@@ -771,21 +771,20 @@ public  class Analyser {
             chosed_Instruction.add(new Instruction(Operation.push, token.getValue()));
             return new OPGSymbol(SymbolType.INT, token.getStartPos());
         }else if (check(TokenType.Double_Literal)){
-            token = expect(TokenType.Double_Literal);
+            token = next();
             chosed_Instruction.add(new Instruction(Operation.push, Double.doubleToRawLongBits((double) token.getValue())));
             return new OPGSymbol(SymbolType.DOUBLE,token.getStartPos());
         }else if (check(TokenType.String_Literal)){
-            token = expect(TokenType.String_Literal);
+            token = next();
             chosed_Instruction.add(new Instruction(Operation.push, (long) global_offset++));
             Globals.add(token.getValueString());
             return new OPGSymbol(SymbolType.INT,token.getStartPos());
         }else if(check(TokenType.Char_Literal)){
-            token = expect(TokenType.Char_Literal);
-            chosed_Instruction.add(new Instruction(Operation.push,(long)(char) token.getValue()));
+            token = next();
+            chosed_Instruction.add(new Instruction(Operation.push,(long) (char) token.getValue()));
             return new OPGSymbol(SymbolType.INT,token.getStartPos());
-        }
-        else if (check(TokenType.Ident)){
-            token = expect(TokenType.Ident);
+        } else if (check(TokenType.Ident)){
+            token = next();
             Integer now_index = this.hashMap.get(token.getValueString());
             Symbol sym = null;
             if (now_index != null)
@@ -831,7 +830,7 @@ public  class Analyser {
                         case "putchar":
                         case "putstr":
                             fun_re_ty = SymbolType.VOID;
-                            params = new ArrayList<SymbolType>(){{
+                            params = new ArrayList<SymbolType>() {{
                                 add(SymbolType.INT);
                             }};
                             break;
