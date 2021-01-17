@@ -455,22 +455,23 @@ public  class Analyser {
         for (Integer bN : br_list){
             instructions.get(bN).setParam1(instructions.size() - bN - 1);
         }
-//        analyse_expr();
-//        analyse_block_stmt();
     }
-
+    private SymbolType a_r_s1() throws CompileError{
+        SymbolType result = SymbolType.VOID;
+        if (check(TokenType.Minus) || check(TokenType.Ident) || check(TokenType.Uint_Literal) || check(TokenType.Double_Literal) ||
+                check(TokenType.String_Literal) || check(TokenType.Char_Literal) || check(TokenType.L_paren)){
+            OPGSymbol em = analyse_opg_expr(false);
+            result = em.getType();
+        }
+        return result;
+    }
     private void analyse_return_stmt(SymbolType re) throws CompileError{//over
         //return 语句
         //return_stmt -> 'return' expr? ';'
         Token wish = expect(TokenType.Return);
         if (re != SymbolType.VOID)
             instructions.add(new Instruction(Operation.arga,0));
-        SymbolType ty = SymbolType.VOID;
-        if (check(TokenType.Minus) || check(TokenType.Ident) || check(TokenType.Uint_Literal) || check(TokenType.Double_Literal) ||
-                check(TokenType.String_Literal) || check(TokenType.Char_Literal) || check(TokenType.L_paren)) {
-            OPGSymbol em = analyse_opg_expr(false);
-            ty = em.getType();
-        }
+        SymbolType ty = a_r_s1();
         expect(TokenType.Semicolon);
         if (ty != re)
             throw new AnalyzeError(ErrorCode.InvalidInput,wish.getStartPos());
@@ -633,9 +634,15 @@ public  class Analyser {
         }
         return expr_Stack.peek();
     }
+    private void m_r1(SymbolType NO1_type) throws CompileError{
+        if (NO1_type == SymbolType.INT)
+            instructions.add(new Instruction(Operation.cmpi));
+        else
+            instructions.add(new Instruction(Operation.cmpf));
+    }
 
     private void my_reduction(Stack<TokenType>sym,Stack<OPGSymbol> exprs,boolean is_g) throws CompileError{ //over
-        if (exprs.size() <= 0 )
+        if (exprs.size() <= 1 )
             throw new EmptyStackException();
         else {
             SymbolType NO2_Type = exprs.pop().getType();
@@ -664,52 +671,34 @@ public  class Analyser {
                 if (NO1_ty == NO2_Type){
                     switch (ty){
                         case Gt:
-                            if (NO1_ty == SymbolType.INT)
-                                instructions.add(new Instruction(Operation.cmpi));
-                            else
-                                instructions.add(new Instruction(Operation.cmpf));
+                            m_r1(NO1_ty);
                             instructions.add(new Instruction(Operation.setgt));
                             NO1.setType(SymbolType.BOOL);
                             break;
                         case Lt:
-                            if (NO1_ty == SymbolType.INT)
-                                instructions.add(new Instruction(Operation.cmpi));
-                            else
-                                instructions.add(new Instruction(Operation.cmpf));
+                            m_r1(NO1_ty);
                             instructions.add(new Instruction(Operation.setlt));
                             NO1.setType(SymbolType.BOOL);
                             break;
                         case Ge:
-                            if (NO1_ty == SymbolType.INT)
-                                instructions.add(new Instruction(Operation.cmpi));
-                            else
-                                instructions.add(new Instruction(Operation.cmpf));
+                            m_r1(NO1_ty);
                             instructions.add(new Instruction(Operation.setlt));
                             instructions.add(new Instruction(Operation.not));
                             NO1.setType(SymbolType.BOOL);
                             break;
                         case Le:
-                            if (NO1_ty == SymbolType.INT)
-                                instructions.add(new Instruction(Operation.cmpi));
-                            else
-                                instructions.add(new Instruction(Operation.cmpf));
+                            m_r1(NO1_ty);
                             instructions.add(new Instruction(Operation.setgt));
                             instructions.add(new Instruction(Operation.not));
                             NO1.setType(SymbolType.BOOL);
                             break;
                         case Eq:
-                            if (NO1_ty == SymbolType.INT)
-                                instructions.add(new Instruction(Operation.cmpi));
-                            else
-                                instructions.add(new Instruction(Operation.cmpf));
+                            m_r1(NO1_ty);
                             instructions.add(new Instruction(Operation.not));
                             NO1.setType(SymbolType.BOOL);
                             break;
                         case Neq:
-                            if (NO1_ty == SymbolType.INT)
-                                instructions.add(new Instruction(Operation.cmpi));
-                            else
-                                instructions.add(new Instruction(Operation.cmpf));
+                            m_r1(NO1_ty);
                             NO1.setType(SymbolType.BOOL);
                             break;
                         case Plus:
@@ -944,33 +933,6 @@ public  class Analyser {
         if (em.getType() != SymbolType.VOID)
             instructions.add(new Instruction(Operation.pop));
     }
-    private void analyse_expr() throws CompileError{
-        //表达式
-        /*expr ->
-                operator_expr
-                        | negate_expr
-                        | assign_expr
-                        | as_expr
-                        | call_expr
-                        | literal_expr
-                        | ident_expr
-                        | group_expr */
-
-    }
-
-    private void analyse_operator_expr() throws CompileError{ //over
-        //operator_expr -> expr binary_operator expr
-        analyse_expr();
-        analyse_binary_operator();
-        analyse_expr();
-    }
-
-    private void analyse_binary_operator() throws CompileError{//not over
-        //运算符
-        //binary_operator -> '+' | '-' | '*' | '/' | '==' | '!=' | '<' | '>' | '<=' | '>='
-
-    }
-
 
     private OPGSymbol analyse_negate_expr(boolean is_g) throws CompileError{//over
         //取反表达式
@@ -991,65 +953,6 @@ public  class Analyser {
         return em;
     }
 
-    private void analyse_assign_expr() throws CompileError{//over
-        //赋值表达式
-        //l_expr -> IDENT
-        //assign_expr -> l_expr '=' expr
-        expect(TokenType.Ident);
-        expect(TokenType.Assign);
-        analyse_expr();
-    }
-
-    private void analyse_as_expr() throws CompileError{
-        //类型转换表达式
-        //as_expr -> expr 'as' ty
-        analyse_expr();
-        expect(TokenType.As);
-        analysety();
-    }
-
-    private void analyse_call_expr() throws CompileError{//over
-        //call_param_list -> expr (',' expr)*
-        //call_expr -> IDENT '(' call_param_list? ')'
-        expect(TokenType.Ident);
-        expect(TokenType.L_paren);
-        var peek = peek();
-        if(peek.getTokenType() != TokenType.R_paren){
-
-        }
-        else next();
-    }
-
-    private void analyse_call_param_list() throws CompileError{//over
-        //call_param_list -> expr (',' expr)*
-        analyse_expr();
-        while (peek().getTokenType() == TokenType.Comma){
-            next();
-            analyse_expr();
-        }
-    }
-
-    private void analyse_literal_expr() throws CompileError{//not over
-        //字面量表达式
-        //literal_expr -> UINT_LITERAL | DOUBLE_LITERAL | STRING_LITERAL
-        //暂时不考虑浮点类型
-
-    }
-
-    private void analyse_ident_expr() throws CompileError{
-        //标识符表达式
-        //ident_expr -> IDENT
-        expect(TokenType.Ident);
-
-    }
-
-    private void analyse_group_expr() throws CompileError{
-        //括号表达式
-        //group_expr -> '(' expr ')'
-        expect(TokenType.L_paren);
-        analyse_expr();
-        expect(TokenType.R_paren);
-    }
     private void af1() throws CompileError{
         expect(TokenType.R_paren);
         expect(TokenType.Arrow);
