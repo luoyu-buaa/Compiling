@@ -368,6 +368,18 @@ public  class Analyser {
         instructions.add(new Instruction(Operation.br));
     }
 
+    private void a_i_s1(OPGSymbol em) throws CompileError{
+        if (em.getType() == SymbolType.VOID)
+            throw new AnalyzeError(ErrorCode.InvalidInput,em.getStartPos());
+        instructions.add(new Instruction(Operation.brtrue,1));
+        instructions.add(new Instruction(Operation.br));
+    }
+
+    private void a_i_s2(int br_loc) throws CompileError{
+        instructions.add(new Instruction(Operation.br));
+        instructions.get(br_loc).setParam1(instructions.size() - br_loc - 1);
+    }
+
     private boolean[] analyse_if_stmt(boolean in_while,SymbolType re,int loc,ArrayList<Integer> br_list) throws CompileError{ //over
         /*
         if_stmt -> 'if' expr block_stmt ('else' (block_stmt | if_stmt))?
@@ -381,35 +393,27 @@ public  class Analyser {
         ArrayList<Integer> bToe = new ArrayList<>();
         expect(TokenType.If);
         OPGSymbol em = analyse_opg_expr(false);
-        if (em.getType() == SymbolType.VOID)
-            throw new AnalyzeError(ErrorCode.InvalidInput,em.getStartPos());
-        instructions.add(new Instruction(Operation.brtrue,1));
-        instructions.add(new Instruction(Operation.br));
+        a_i_s1(em);
         int br_loc = instructions.size();
         br_loc = br_loc - 1;
         boolean[] c = analyse_block_stmt(false,in_while,re,loc,br_list);
         h_return = c[0];
         h_BreakorContinue = c[1];
         bToe.add(instructions.size());
-        instructions.add(new Instruction(Operation.br));
-        instructions.get(br_loc).setParam1(instructions.size() - br_loc - 1);
+        a_i_s2(br_loc);
         if(peek().getTokenType() == TokenType.Else){
             while (nextIf(TokenType.Else) != null){
                 if(peek().getTokenType() == TokenType.If){
                     next();
                     em = analyse_opg_expr(false);
-                    if (em.getType() == SymbolType.VOID)
-                        throw new AnalyzeError(ErrorCode.InvalidInput,em.getStartPos());
-                    instructions.add(new Instruction(Operation.brtrue,1));
-                    instructions.add(new Instruction(Operation.br));
+                    a_i_s1(em);
                     br_loc = instructions.size();
                     br_loc = br_loc - 1;
                     c = analyse_block_stmt(false,in_while,re,loc,br_list);
                     h_return = h_return & c[0];
                     h_BreakorContinue &= c[1];
                     bToe.add(instructions.size());
-                    instructions.add(new Instruction(Operation.br));
-                    instructions.get(br_loc).setParam1(instructions.size() - br_loc - 1);
+                    a_i_s2(br_loc);
                 } else {
                     c = analyse_block_stmt(false,in_while,re,loc,br_list);
                     h_return = h_return & c[0];
