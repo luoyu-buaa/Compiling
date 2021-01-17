@@ -582,11 +582,7 @@ public  class Analyser {
             throw new AnalyzeError(ErrorCode.InvalidInput,name.getStartPos());
         Symbol sym = add_Symbol(name.getValueString(),true,true,ty,storageType,name.getStartPos());
         expect(TokenType.Assign);
-        if (is_g)
-            startInstructions.add(new Instruction(Operation.globa,sym.getOffset()));
-        else
-            instructions.add(new Instruction(Operation.loca,sym.getOffset()));
-
+        j2(is_g,sym);
         OPGSymbol sym_opg = analyse_opg_expr(is_g);
         j1(ty,sym_opg);
         expect(TokenType.Semicolon);
@@ -600,7 +596,12 @@ public  class Analyser {
         if(ty != em.getType())
             throw new AnalyzeError(ErrorCode.InvalidInput,em.getStartPos());
     }
-
+    private void j2(boolean is_g,Symbol sym) throws CompileError{
+        if (is_g)
+            startInstructions.add(new Instruction(Operation.globa,sym.getOffset()));
+        else
+            instructions.add(new Instruction(Operation.loca,sym.getOffset()));
+    }
     private OPGSymbol analyse_opg_expr(boolean is_g) throws CompileError{ //over
         Stack<TokenType> symStack = new Stack<>();
         Stack<OPGSymbol> expr_Stack = new Stack<>();
