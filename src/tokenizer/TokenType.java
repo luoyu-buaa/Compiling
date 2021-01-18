@@ -73,5 +73,5 @@ public enum TokenType {
     Semicolon,
     /** 读取结束 */
     Eof;
-    
+
 }

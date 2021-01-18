@@ -293,8 +293,9 @@ public  class Analyser {
         //decl以let或const开头
         to_start();
         ap1();
+        Token eof = expect(TokenType.Eof);
         if (this.hashMap.get("main") == null)
-            throw new AnalyzeError(ErrorCode.InvalidInput,expect(TokenType.Eof).getStartPos());
+            throw new AnalyzeError(ErrorCode.InvalidInput,eof.getStartPos());
         startInstructions.add(new Instruction(Operation.stackalloc, 0));
         startInstructions.add(new Instruction(Operation.call, this.symbolTable.get(this.hashMap.get("main")).getFuncOffset()));
     }
