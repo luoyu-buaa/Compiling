@@ -316,21 +316,20 @@ public  class Analyser {
             case Let:
             case Const:
                 analyse_decl_stmt(StorageType.local);
-                return new boolean[]{false, false};
-
+                break;
             case If:
                 return  analyse_if_stmt(in_while,re_ty,lp_loc,bk_list);
 
             case While:
                 analyse_while_stmt(re_ty);
-                return new boolean[]{false, false};
+                break;
 
             case Break:
                 if (in_while)
                     analyse_break_stmt(bk_list);
                 else
-                    throw new AnalyzeError(ErrorCode.InvalidInput,peek().getStartPos());
-                return new boolean[]{false, true};
+                    throw new AnalyzeError(ErrorCode.InvalidInput, peek().getStartPos());
+                return new boolean[]{false,true};
 
             case Continue:
                 if (in_while)
@@ -341,19 +340,18 @@ public  class Analyser {
 
             case Return:
                 analyse_return_stmt(re_ty);
-                return new boolean[]{true, false};
+                return new boolean[] {true, false};
 
             case L_brace:
                 return analyse_block_stmt(false,in_while,re_ty,lp_loc,bk_list);
 
             case Semicolon:
                 expect(TokenType.Semicolon);
-                return new boolean[]{false, false};
-
+                break;
             default:
                 analyse_expr_stmt();
-                return new boolean[]{false, false};
         }
+        return new boolean[]{false, false};
     }
 
     private void analyse_continue_stmt(int loc) throws CompileError{//over
